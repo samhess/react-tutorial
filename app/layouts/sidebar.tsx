@@ -1,4 +1,5 @@
-import { Form, Link, NavLink, Outlet, useNavigation } from "react-router";
+import { useEffect, useState } from "react";
+import { Form, Link, NavLink, Outlet, useNavigation, useSubmit } from "react-router";
 import { getContacts } from "../data";
 import type { Route } from "./+types/sidebar";
 
@@ -12,6 +13,16 @@ export async function loader({request}:Route.LoaderArgs) {
 export default function SidebarLayout({loaderData}:Route.ComponentProps) {
   const {contacts, q} = loaderData;
   const navigation = useNavigation();
+  const submit = useSubmit();
+  const searching =
+    navigation.location &&
+    new URLSearchParams(navigation.location.search).has("q");
+  // the query now needs to be kept in state
+  const [query, setQuery] = useState(q || "");
+
+  // we still have a `useEffect` to synchronize the query
+  // to the component state on back/forward button clicks
+  useEffect(() => {setQuery(q || "");}, [q]);
 
   return (
     <>
@@ -20,18 +31,31 @@ export default function SidebarLayout({loaderData}:Route.ComponentProps) {
           <Link to="about">React Router Contacts</Link>
         </h1>
         <div>
-          <Form id="search-form" role="search">
+          <Form 
+            id="search-form" 
+            onChange={(event) => {
+              const isFirstSearch = q === null;
+              submit(event.currentTarget, {
+                replace: !isFirstSearch,
+              });
+            }}
+            role="search"
+          >
             <input
               aria-label="Search contacts"
-              defaultValue={q || ""}
+              className={searching ? "loading" : ""}
               id="q"
               name="q"
+              // synchronize user's input to component state
+              onChange={event=>setQuery(event.currentTarget.value)}
               placeholder="Search"
               type="search"
+              // switched to `value` from `defaultValue`
+              value={query}
             />
             <div
               aria-hidden
-              hidden={true}
+              hidden={!searching}
               id="search-spinner"
             />
           </Form>
@@ -77,7 +101,7 @@ export default function SidebarLayout({loaderData}:Route.ComponentProps) {
       </div>
       <div
         className={
-          navigation.state === "loading" ? "loading" : ""
+          navigation.state === "loading" && !searching ? "loading" : ""
         }
         id="detail">
         <Outlet />
