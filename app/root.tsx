@@ -1,23 +1,17 @@
-import {
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  isRouteErrorResponse,
-  redirect
-} from "react-router";
-import type { Route } from "./+types/root";
+import type {Route} from "./+types/root"
 
-import appStylesHref from "./app.css?url";
-
-import { createEmptyContact } from "./data";
+import {Outlet,Scripts,ScrollRestoration} from "react-router"
+import {isRouteErrorResponse,redirect} from "react-router"
+import appStylesHref from "./app.css?url"
+import { createEmptyContact } from "./data"
 
 export async function action() {
   const contact = await createEmptyContact();
-  return redirect(`/contacts/${contact.id}/edit`);
+  return redirect(`/contacts/${contact.id}/edit`)
 }
 
 export default function App() {
-  return <Outlet/>;
+  return <Outlet/>
 }
 
 // The Layout component is a special export for the root route.

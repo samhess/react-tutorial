@@ -1,26 +1,27 @@
-import { Form, useFetcher } from "react-router";
+import type { Route } from "./+types/contact"
+import type { ContactRecord } from "../data"
 
-import type { ContactRecord } from "../data";
-import { getContact, updateContact } from "../data";
-import type { Route } from "./+types/contact";
+import { Form, useFetcher } from "react-router"
+import { getContact, updateContact } from "../data"
+import { Fragment } from "react/jsx-runtime"
 
 export async function action({params,request}:Route.ActionArgs) {
-  const formData = await request.formData();
+  const formData = await request.formData()
   return updateContact(params.contactId, {
     favorite: formData.get("favorite") === "true",
-  });
+  })
 }
 
 export async function loader({params}:Route.LoaderArgs) {
-  const contact = await getContact(params.contactId);
+  const contact = await getContact(params.contactId)
   if (!contact) {
-    throw new Response("Not Found", { status: 404 });
+    throw new Response("Not Found", {status:404})
   }
-  return { contact };
+  return {contact}
 }
 
 export default function Contact({loaderData}:Route.ComponentProps) {
-  const { contact } = loaderData;
+  const {contact} = loaderData
 
   return (
     <div id="contact">
@@ -35,9 +36,9 @@ export default function Contact({loaderData}:Route.ComponentProps) {
       <div>
         <h1>
           {contact.first || contact.last ? (
-            <>
+            <Fragment>
               {contact.first} {contact.last}
-            </>
+            </Fragment>
           ) : (
             <i>No Name</i>
           )}
@@ -67,9 +68,9 @@ export default function Contact({loaderData}:Route.ComponentProps) {
             onSubmit={(event) => {
               const response = confirm(
                 "Please confirm you want to delete this record."
-              );
+              )
               if (!response) {
-                event.preventDefault();
+                event.preventDefault()
               }
             }}
           >
@@ -86,7 +87,7 @@ function Favorite({
 }: {
   contact: Pick<ContactRecord, "favorite">;
 }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher()
   const favorite = fetcher.formData
     ? fetcher.formData.get("favorite") === "true"
     : contact.favorite;
@@ -94,16 +95,12 @@ function Favorite({
   return (
     <fetcher.Form method="post">
       <button
-        aria-label={
-          favorite
-            ? "Remove from favorites"
-            : "Add to favorites"
-        }
+        aria-label={favorite? "Remove from favorites": "Add to favorites"}
         name="favorite"
         value={favorite ? "false" : "true"}
       >
         {favorite ? "★" : "☆"}
       </button>
     </fetcher.Form>
-  );
+  )
 }

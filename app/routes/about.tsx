@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import {Link} from "react-router"
 
 export default function About() {
   return (
@@ -33,9 +33,7 @@ export default function About() {
         <h2>Learn More</h2>
         <p>
           Check out the official documentation at{" "}
-          <a href="https://reactrouter.com">
-            reactrouter.com
-          </a>{" "}
+          <a href="https://reactrouter.com">reactrouter.com</a>{" "}
           to learn more about building great web
           applications with React Router.
         </p>

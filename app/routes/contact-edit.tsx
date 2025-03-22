@@ -1,5 +1,5 @@
+import type { Route } from "./+types/contact-edit";
 import { Form, redirect, useNavigate } from "react-router";
-import type { Route } from "./+types/edit-contact";
 
 import { getContact, updateContact } from "../data";
 
