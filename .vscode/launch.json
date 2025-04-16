@@ -8,8 +8,8 @@
       "name": "Start dev server",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs":  ["run", "dev"],
+      "runtimeArgs": ["run", "dev"],
       "type": "node"
-    },
+    }
   ]
 }

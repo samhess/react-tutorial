@@ -1,69 +1,63 @@
-import type { Route } from "./+types/sidebar"
+import type {Route} from './+types/sidebar'
 
-import { useEffect, useState } from "react"
-import { Form, Link, NavLink, Outlet, useNavigation, useSubmit } from "react-router"
-import { getContacts } from "../data"
+import {useEffect, useState} from 'react'
+import {Form, Link, NavLink, Outlet, useNavigation, useSubmit} from 'react-router'
+import {getContacts} from '../data'
 
-export async function loader({request}:Route.LoaderArgs) {
+export async function loader({request}: Route.LoaderArgs) {
   const url = new URL(request.url)
-  const q = url.searchParams.get("q")
+  const q = url.searchParams.get('q')
   const contacts = await getContacts(q)
   return {contacts, q}
 }
 
-export default function SidebarLayout({loaderData}:Route.ComponentProps) {
+export default function SidebarLayout({loaderData}: Route.ComponentProps) {
   const {contacts, q} = loaderData
   const navigation = useNavigation()
   const submit = useSubmit()
-  const searching =
-    navigation.location &&
-    new URLSearchParams(navigation.location.search).has("q")
+  const searching = navigation.location && new URLSearchParams(navigation.location.search).has('q')
   // the query now needs to be kept in state
-  const [query, setQuery] = useState(q || "")
+  const [query, setQuery] = useState(q || '')
 
   // we still have a `useEffect` to synchronize the query
   // to the component state on back/forward button clicks
   useEffect(() => {
-    setQuery(q || "")
+    setQuery(q || '')
   }, [q])
 
   return (
     <>
-      <div id="sidebar">
+      <div id='sidebar'>
         <h1>
-          <Link to="about">React Router Contacts</Link>
+          <Link to='about'>React Router Contacts</Link>
         </h1>
         <div>
-          <Form 
-            id="search-form" 
+          <Form
+            id='search-form'
             onChange={(event) => {
-              const isFirstSearch = q === null;
+              const isFirstSearch = q === null
               submit(event.currentTarget, {
-                replace: !isFirstSearch,
-              });
+                replace: !isFirstSearch
+              })
             }}
-            role="search"
+            role='search'
           >
             <input
-              aria-label="Search contacts"
-              className={searching ? "loading" : ""}
-              id="q"
-              name="q"
+              aria-label='Search contacts'
+              className={searching ? 'loading' : ''}
+              id='q'
+              name='q'
               // synchronize user's input to component state
-              onChange={event=>setQuery(event.currentTarget.value)}
-              placeholder="Search"
-              type="search"
+              onChange={(event) => setQuery(event.currentTarget.value)}
+              placeholder='Search'
+              type='search'
               // switched to `value` from `defaultValue`
               value={query}
             />
-            <div
-              aria-hidden
-              hidden={!searching}
-              id="search-spinner"
-            />
+            <div aria-hidden hidden={!searching} id='search-spinner' />
           </Form>
-          <Form method="post">
-            <button type="submit">New</button>
+          <Form method='post'>
+            <button type='submit'>New</button>
           </Form>
         </div>
         <nav>
@@ -72,12 +66,8 @@ export default function SidebarLayout({loaderData}:Route.ComponentProps) {
               {contacts.map((contact) => (
                 <li key={contact.id}>
                   <NavLink
-                    className={({ isActive, isPending }) =>
-                      isActive
-                        ? "active"
-                        : isPending
-                        ? "pending"
-                        : ""
+                    className={({isActive, isPending}) =>
+                      isActive ? 'active' : isPending ? 'pending' : ''
                     }
                     to={`contacts/${contact.id}`}
                   >
@@ -88,9 +78,7 @@ export default function SidebarLayout({loaderData}:Route.ComponentProps) {
                     ) : (
                       <i>No Name</i>
                     )}
-                    {contact.favorite ? (
-                      <span>★</span>
-                    ) : null}
+                    {contact.favorite ? <span>★</span> : null}
                   </NavLink>
                 </li>
               ))}
@@ -102,13 +90,9 @@ export default function SidebarLayout({loaderData}:Route.ComponentProps) {
           )}
         </nav>
       </div>
-      <div
-        className={
-          navigation.state === "loading" && !searching ? "loading" : ""
-        }
-        id="detail">
+      <div className={navigation.state === 'loading' && !searching ? 'loading' : ''} id='detail'>
         <Outlet />
       </div>
     </>
-  );
+  )
 }
